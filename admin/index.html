@@ -1,147 +1,917 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ממשק ניהול Reborn</title>
+  <title>מערכת ניהול Reborn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <!-- Netlify Identity widget for user authentication -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   
   <style>
-    /* =========================================================
-       Reborn — Custom Premium Golden Theme for Decap CMS UI
-       ========================================================= */
+    :root {
+      --gold: #c69a2e;
+      --gold-d: #9a7416;
+      --ink: #28231b;
+      --muted: #7c715d;
+      --line: rgba(124, 113, 93, 0.25);
+      --cream: #faf6ee;
+      --grad: linear-gradient(135deg, #b8860b, #e6c061, #9a7416);
+      --dark-grad: linear-gradient(160deg, #1c1610, #2a241b);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: "Noto Sans Hebrew", system-ui, sans-serif !important;
-      background-color: #faf6ee !important;
+      font-family: "Noto Sans Hebrew", system-ui, sans-serif;
+      direction: rtl;
+      background: #f4eee2;
+      color: var(--ink);
+      line-height: 1.6;
+      min-height: 100vh;
     }
 
-    /* Top Navigation Bar */
-    header[class*="AppHeader"] {
-      background: linear-gradient(160deg, #211b11, #2a241b) !important;
-      border-bottom: 3px solid #c69a2e !important;
-      box-shadow: 0 6px 24px -12px rgba(0, 0, 0, 0.5) !important;
+    /* ================= LOGIN SCREEN ================= */
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--dark-grad);
+      padding: 20px;
+    }
+    .login-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 45px 35px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 50px -15px rgba(0, 0, 0, 0.6);
+      border-top: 4px solid var(--gold);
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      background: var(--dark-grad);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      box-shadow: 0 8px 20px -6px rgba(198, 154, 46, 0.5);
+      border: 2px solid var(--gold);
+    }
+    .login-logo span {
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .login-card h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .login-card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 30px;
+    }
+
+    /* ================= MAIN INTERFACE ================= */
+    .app-screen {
+      display: none; /* Shown after login */
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 22px;
+      background: var(--dark-grad);
+      color: #fff;
+      box-shadow: 0 6px 24px -12px rgba(0,0,0,.5);
+      border-bottom: 2.5px solid var(--gold);
+    }
+    .topbar .brand {
+      font-weight: 900;
+      font-size: 1.3rem;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .topbar .right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn {
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 24px;
+      font-size: .95rem;
+      transition: transform .15s, box-shadow .2s, background .2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-gold {
+      background: var(--grad);
+      color: #3a2c07;
+      box-shadow: 0 12px 26px -12px rgba(198, 154, 46, .7);
+    }
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -8px rgba(198, 154, 46, .9);
+    }
+    .btn-gold:disabled {
+      background: #ccc !important;
+      color: #666 !important;
+      cursor: not-allowed;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+    .btn-ghost {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.3);
+    }
+    .btn-ghost:hover {
+      background: rgba(255,255,255,.22);
+    }
+    .btn-danger {
+      background: #fde8e8;
+      color: #b42318;
+    }
+    .btn-danger:hover {
+      background: #f9d4d4;
+    }
+    .btn-sm {
+      padding: 7px 14px;
+      font-size: .82rem;
+    }
+    .wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 26px 20px 100px;
+    }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      border-radius: 50px;
+      padding: 10px 24px;
+      font-size: .95rem;
+      transition: .2s;
+    }
+    .tab.active {
+      background: var(--grad);
+      color: #3a2c07;
+      border-color: transparent;
+    }
+    .panel {
+      display: none;
+      animation: fade .3s ease;
+    }
+    .panel.active {
+      display: block;
+    }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+    .group {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 24px 24px 10px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 35px -20px rgba(42,36,27,.35);
+    }
+    .group h2 {
+      font-size: 1.25rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+    .group .desc {
+      color: var(--muted);
+      font-size: .88rem;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(124, 113, 93, 0.12);
+      padding-bottom: 12px;
+    }
+    .field {
+      margin-bottom: 18px;
+    }
+    .field label {
+      display: block;
+      font-weight: 700;
+      font-size: .92rem;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+    .field input, .field textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: .98rem;
+      padding: 12px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: #fdfbf6;
+      color: var(--ink);
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+    .field input:focus, .field textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 4px rgba(198, 154, 46, .22);
+      background: #fff;
+    }
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .savebar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--line);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 30;
+      box-shadow: 0 -8px 24px -12px rgba(0,0,0,0.15);
+    }
+    .savebar .hint {
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 500;
     }
     
-    /* Brand text inside header */
-    span[class*="AppHeaderBrand"] {
-      font-weight: 900 !important;
-      letter-spacing: 1px !important;
-      background: linear-gradient(135deg, #b8860b, #e6c061, #9a7416) !important;
-      -webkit-background-clip: text !important;
-      background-clip: text !important;
-      -webkit-text-fill-color: transparent !important;
+    /* ================= GALLERY STYLING ================= */
+    .uploader {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: flex-end;
     }
-
-    /* Main Container / Sidebar background */
-    div[class*="SidebarContainer"] {
-      background-color: #faf6ee !important;
-      border-left: 1px solid rgba(124, 113, 93, 0.2) !important;
+    .uploader .field {
+      flex: 1;
+      min-width: 160px;
+      margin-bottom: 0;
+    }
+    .drop {
+      border: 2.5px dashed var(--gold);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      color: var(--gold-d);
+      background: rgba(198, 154, 46, .05);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: .2s;
+      margin-bottom: 20px;
+    }
+    .drop:hover, .drop.over {
+      background: rgba(198, 154, 46, .12);
+      border-color: var(--gold-d);
+    }
+    .ggrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+    }
+    .gcard {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px -20px rgba(42,36,27,.4);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s;
+    }
+    .gcard:hover {
+      transform: translateY(-2px);
+    }
+    .gcard img {
+      width: 100%;
+      height: 155px;
+      object-fit: cover;
+      background: #eee;
+    }
+    .gcard .body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .gcard input {
+      width: 100%;
+      font-family: inherit;
+      font-size: .88rem;
+      padding: 8px 11px;
+      border: 1.5px solid var(--line);
+      border-radius: 9px;
+      background: #fdfbf6;
+    }
+    .gcard input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+    .gcard .actions {
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      right: 50%;
+      transform: translateX(50%) translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      background: #211b11;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-weight: 700;
+      transition: .3s;
+      z-index: 50;
+      box-shadow: 0 16px 40px -16px rgba(0,0,0,.6);
+      border: 1px solid var(--gold);
+      text-align: center;
+      max-width: 90%;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(50%) translateY(0);
+    }
+    .toast.err {
+      background: #b42318;
+      border-color: #f9d4d4;
+    }
+    .empty {
+      color: var(--muted);
+      text-align: center;
+      padding: 40px;
+      font-weight: 600;
     }
     
-    /* Navigation Sidebar Links */
-    a[class*="SidebarLink"] {
-      font-family: "Noto Sans Hebrew", sans-serif !important;
-      font-weight: 600 !important;
-      color: #7c715d !important;
-      border-radius: 8px !important;
-      margin: 4px 10px !important;
-      padding: 10px 14px !important;
-      transition: all 0.2s !important;
+    /* Loading overlay */
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(250, 246, 238, 0.9);
+      z-index: 99;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
     }
-    a[class*="SidebarLink"]:hover,
-    a[class*="SidebarActiveLink"] {
-      background: rgba(198, 154, 46, 0.15) !important;
-      color: #9a7416 !important;
-      font-weight: 700 !important;
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(198, 154, 46, 0.2);
+      border-top: 5px solid var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
-
-    /* Editor / Form Container Card */
-    div[class*="AppCard"] {
-      background: #ffffff !important;
-      border: 1px solid rgba(124, 113, 93, 0.25) !important;
-      border-radius: 18px !important;
-      box-shadow: 0 14px 40px -28px rgba(42, 36, 27, 0.3) !important;
-      padding: 30px !important;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
-
-    /* Editor Input Fields & Labels */
-    label[class*="ControlLabel"] {
-      font-family: "Noto Sans Hebrew", sans-serif !important;
-      font-weight: 700 !important;
-      color: #2a241b !important;
-      font-size: 0.95rem !important;
-      margin-bottom: 8px !important;
-    }
-    input[id*="field-"], textarea[id*="field-"], select[id*="field-"] {
-      font-family: "Noto Sans Hebrew", sans-serif !important;
-      font-size: 1rem !important;
-      padding: 12px 15px !important;
-      border: 1.5px solid rgba(124, 113, 93, 0.25) !important;
-      border-radius: 12px !important;
-      background: #fdfbf6 !important;
-      color: #28231b !important;
-      transition: all 0.2s !important;
-    }
-    input[id*="field-"]:focus, textarea[id*="field-"]:focus {
-      border-color: #c69a2e !important;
-      box-shadow: 0 0 0 4px rgba(198, 154, 46, 0.22) !important;
-      background: #ffffff !important;
-      outline: none !important;
+    .loading-text {
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 1.1rem;
     }
 
-    /* Widgets / Objects Containers */
-    div[class*="WidgetContainer"] {
-      border: 1px solid rgba(124, 113, 93, 0.15) !important;
-      border-radius: 14px !important;
-      background-color: #faf6ee !important;
-      padding: 20px !important;
-      margin-bottom: 20px !important;
-    }
-
-    /* Buttons (Publish, Save, Delete, Add) */
-    button[class*="Button"] {
-      font-family: "Noto Sans Hebrew", sans-serif !important;
-      font-weight: 700 !important;
-      border-radius: 50px !important;
-      transition: all 0.2s !important;
-    }
-    
-    /* Primary Action Buttons (like "Publish" / "Save") */
-    button[class*="PublishButton"], 
-    button[class*="Button-button-default-blue"] {
-      background: linear-gradient(135deg, #b8860b, #e6c061, #9a7416) !important;
-      color: #3a2c07 !important;
-      box-shadow: 0 8px 20px -8px rgba(198, 154, 46, 0.6) !important;
-      border: none !important;
-    }
-    button[class*="PublishButton"]:hover, 
-    button[class*="Button-button-default-blue"]:hover {
-      transform: translateY(-1px) !important;
-      box-shadow: 0 12px 24px -6px rgba(198, 154, 46, 0.8) !important;
-    }
-
-    /* Secondary Buttons */
-    button[class*="Button-button-default-gray"] {
-      background: rgba(255, 255, 255, 0.8) !important;
-      border: 1px solid rgba(124, 113, 93, 0.3) !important;
-      color: #7c715d !important;
-    }
-    button[class*="Button-button-default-gray"]:hover {
-      background: #ffffff !important;
-      color: #9a7416 !important;
-      border-color: #c69a2e !important;
-    }
-
-    /* RTL / Hebrew corrections for Decap UI */
-    div[class*="FieldContainer"] {
-      text-align: right !important;
+    @media(max-width: 560px) {
+      .row2 { grid-template-columns: 1fr; }
+      .savebar { flex-direction: column; text-align: center; padding: 16px; }
+      .savebar button { width: 100%; }
+      .uploader { flex-direction: column; align-items: stretch; }
+      .uploader button { width: 100%; margin-top: 10px; }
     }
   </style>
 </head>
 <body>
-  <!-- Decap CMS core application -->
-  <script src="https://unpkg.com/decap-cms@^3.1.0/dist/decap-cms.js"></script>
+
+  <!-- LOADING OVERLAY -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">מתחבר למערכת...</div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div class="login-screen" id="loginScreen" style="display: none;">
+    <div class="login-card">
+      <div class="login-logo">
+        <span>RR</span>
+      </div>
+      <h1>מרכזי גמילה Reborn</h1>
+      <p>מערכת ניהול תוכן מקוונת ומאובטחת</p>
+      <button class="btn btn-gold" id="loginBtn" style="width: 100%; padding: 14px 20px; font-size: 1.1rem;">
+        התחברות למערכת הניהול
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN APP INTERFACE -->
+  <div class="app-screen" id="appScreen">
+    <div class="topbar">
+      <div class="brand">Reborn · ניהול תוכן</div>
+      <div class="right">
+        <a class="btn btn-ghost btn-sm" href="/" target="_blank">צפייה באתר</a>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn">התנתקות</button>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="tabs">
+        <button class="tab active" data-tab="text">עריכת טקסטים</button>
+        <button class="tab" data-tab="gallery">ניהול גלריה</button>
+      </div>
+
+      <!-- ============ TEXT PANEL ============ -->
+      <div class="panel active" id="panel-text">
+        <div id="textForm"></div>
+      </div>
+
+      <!-- ============ GALLERY PANEL ============ -->
+      <div class="panel" id="panel-gallery">
+        <div class="group">
+          <h2>הוספת תמונה לגלריה</h2>
+          <div class="desc">בחרו תמונה מהמחשב, הוסיפו כותרת (לא חובה) ולחצו "העלאה".</div>
+          <div class="drop" id="drop">לחצו כאן לבחירת תמונה, או גררו תמונה לכאן</div>
+          <input type="file" id="fileInput" accept="image/*" hidden />
+          <div class="uploader">
+            <div class="field"><label>כותרת התמונה</label><input id="upTitle" type="text" placeholder="לדוגמה: חדר טיפול" /></div>
+            <div class="field"><label>תווית קטנה</label><input id="upSub" type="text" placeholder="לדוגמה: טיפול" /></div>
+            <button class="btn btn-gold" id="uploadBtn">העלאה</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <h2>תמונות בגלריה</h2>
+          <div class="desc">ערכו כותרות, שנו סדר או מחקו. בסיום לחצו "שמירת שינויים".</div>
+          <div class="ggrid" id="ggrid"></div>
+          <div class="empty" id="gEmpty" style="display:none">אין עדיין תמונות בגלריה.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="savebar">
+      <span class="hint" id="saveHint">כל שמירה מעדכנת את האתר ומפרסמת אותו אוטומטית תוך דקה.</span>
+      <button class="btn btn-gold" id="saveBtn">שמירת שינויים</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- field definitions (Hebrew labels) ----
+    var SITE_FIELDS = [
+      {k:"phone", label:"טלפון"},
+      {k:"email", label:"אימייל"},
+      {k:"address", label:"כתובת"},
+      {k:"whatsapp", label:"מספר וואטסאפ (פורמט בינלאומי, לדוגמה 972544655098)"}
+    ];
+    
+    var TEXT_GROUPS = [
+      { title:"עמוד הבית — כותרת ראשית (Hero)", fields:[
+        {k:"hero_eyebrow", label:"תווית עליונה", t:"input"},
+        {k:"hero_title", label:"שורת מותג (בזהב)", t:"input"},
+        {k:"hero_title_sub", label:"שורת כותרת", t:"input"},
+        {k:"hero_subtitle", label:"כותרת משנה", t:"textarea"}
+      ]},
+      { title:"עמוד הבית — אודות קצר", fields:[
+        {k:"intro_eyebrow", label:"תווית", t:"input"},
+        {k:"intro_title", label:"כותרת", t:"input"},
+        {k:"intro_text", label:"טקסט", t:"textarea"},
+        {k:"intro_badge", label:"תגית (ליד המספר 15+)", t:"input"}
+      ]},
+      { title:"עמוד הבית — שירותים", fields:[
+        {k:"services_title", label:"כותרת המקטע", t:"input"},
+        {k:"services_subtitle", label:"תיאור המקטע", t:"textarea"},
+        {k:"service1_title", label:"שירות 1 — כותרת", t:"input"},
+        {k:"service1_text", label:"שירות 1 — טקסט", t:"textarea"},
+        {k:"service2_title", label:"שירות 2 — כותרת", t:"input"},
+        {k:"service2_text", label:"שירות 2 — טקסט", t:"textarea"},
+        {k:"service3_title", label:"שירות 3 — כותרת", t:"input"},
+        {k:"service3_text", label:"שירות 3 — טקסט", t:"textarea"}
+      ]},
+      { title:"עמוד אודותינו", fields:[
+        {k:"about_title", label:"כותרת", t:"input"},
+        {k:"about_text1", label:"פסקה 1", t:"textarea"},
+        {k:"about_text2", label:"פסקה 2", t:"textarea"}
+      ]},
+      { title:"עמוד צור קשר", fields:[
+        {k:"contact_title", label:"כותרת", t:"input"},
+        {k:"contact_text", label:"טקסט", t:"textarea"}
+      ]},
+      { title:"כללי / פוטר", fields:[
+        {k:"footer_about", label:"טקסט אודות בפוטר", t:"textarea"}
+      ]}
+    ];
+
+    var state = { site:{}, text:{}, gallery:[], contentSha: null };
+
+    // ---- Toast messages ----
+    function toast(msg, isErr){
+      var t=document.getElementById("toast");
+      t.textContent=msg;
+      t.className="toast show" + (isErr?" err":"");
+      setTimeout(function(){
+        t.className="toast" + (isErr?" err":"");
+      }, 3500);
+    }
+    
+    function esc(s){
+      return String(s==null?"":s).replace(/"/g,"&quot;");
+    }
+
+    // ---- Loading Overlay Helpers ----
+    function showLoading(text) {
+      document.getElementById("loadingOverlay").style.display = "flex";
+      document.getElementById("loadingText").textContent = text;
+    }
+    function hideLoading() {
+      document.getElementById("loadingOverlay").style.display = "none";
+    }
+
+    // ---- build text form ----
+    function buildTextForm(){
+      var html = '<div class="group"><h2>פרטי התקשרות</h2><div class="desc">מתעדכן בכל העמודים (טלפון, אימייל, כתובת, וואטסאפ).</div><div class="row2">';
+      SITE_FIELDS.forEach(function(f){
+        html += '<div class="field"><label>'+f.label+'</label><input type="text" data-site="'+f.k+'" value="'+esc(state.site[f.k])+'"></div>';
+      });
+      html += '</div></div>';
+
+      TEXT_GROUPS.forEach(function(g){
+        html += '<div class="group"><h2>'+g.title+'</h2>';
+        g.fields.forEach(function(f){
+          var v = esc(state.text[f.k]);
+          if(f.t==="textarea"){
+            html += '<div class="field"><label>'+f.label+'</label><textarea data-text="'+f.k+'">'+(state.text[f.k]||"")+'</textarea></div>';
+          }else{
+            html += '<div class="field"><label>'+f.label+'</label><input type="text" data-text="'+f.k+'" value="'+v+'"></div>';
+          }
+        });
+        html += '</div>';
+      });
+      document.getElementById("textForm").innerHTML = html;
+    }
+
+    function collectText(){
+      document.querySelectorAll("[data-site]").forEach(function(el){ state.site[el.getAttribute("data-site")] = el.value.trim(); });
+      document.querySelectorAll("[data-text]").forEach(function(el){ state.text[el.getAttribute("data-text")] = el.value; });
+    }
+
+    // ---- gallery ----
+    function buildGallery(){
+      var grid=document.getElementById("ggrid"); grid.innerHTML="";
+      document.getElementById("gEmpty").style.display = state.gallery.length ? "none":"block";
+      state.gallery.forEach(function(item, i){
+        var c=document.createElement("div"); c.className="gcard";
+        c.innerHTML =
+          '<img src="'+esc(item.src)+'" alt="">'+
+          '<div class="body">'+
+            '<input type="text" data-gi="'+i+'" data-gf="title" value="'+esc(item.title)+'" placeholder="כותרת (ראשית)">'+
+            '<input type="text" data-gi="'+i+'" data-gf="sub" value="'+esc(item.sub)+'" placeholder="תווית (משנית)">'+
+            '<div class="actions">'+
+              '<button class="btn btn-ghost btn-sm" data-move="up" data-i="'+i+'" style="color:var(--ink);border-color:var(--line)">▲</button>'+
+              '<button class="btn btn-ghost btn-sm" data-move="down" data-i="'+i+'" style="color:var(--ink);border-color:var(--line)">▼</button>'+
+              '<button class="btn btn-danger btn-sm" data-del="'+i+'">מחיקה</button>'+
+            '</div>'+
+          '</div>';
+        grid.appendChild(c);
+      });
+    }
+
+    function collectGalleryInputs(){
+      document.querySelectorAll("[data-gi]").forEach(function(el){
+        var i=+el.getAttribute("data-gi"), f=el.getAttribute("data-gf");
+        if(state.gallery[i]) state.gallery[i][f]=el.value;
+      });
+    }
+
+    document.getElementById("ggrid").addEventListener("click", function(e){
+      var del=e.target.getAttribute("data-del");
+      var mv=e.target.getAttribute("data-move");
+      if(del!==null){ collectGalleryInputs(); state.gallery.splice(+del,1); buildGallery(); return; }
+      if(mv){
+        collectGalleryInputs();
+        var i=+e.target.getAttribute("data-i");
+        var j= mv==="up"? i-1 : i+1;
+        if(j<0||j>=state.gallery.length) return;
+        var tmp=state.gallery[i]; state.gallery[i]=state.gallery[j]; state.gallery[j]=tmp;
+        buildGallery();
+      }
+    });
+
+    // ---- File Selector and Drag & Drop ----
+    var fileInput=document.getElementById("fileInput");
+    var drop=document.getElementById("drop");
+    drop.addEventListener("click",function(){fileInput.click();});
+    drop.addEventListener("dragover",function(e){e.preventDefault();drop.classList.add("over");});
+    drop.addEventListener("dragleave",function(){drop.classList.remove("over");});
+    drop.addEventListener("drop",function(e){
+      e.preventDefault();
+      drop.classList.remove("over");
+      if(e.dataTransfer.files[0]){ fileInput.files=e.dataTransfer.files; drop.textContent=e.dataTransfer.files[0].name; }
+    });
+    fileInput.addEventListener("change",function(){ if(fileInput.files[0]) drop.textContent=fileInput.files[0].name; });
+
+    // ---- Netlify Git Gateway Load & Save Operations ----
+    async function loadContent() {
+      showLoading("טוען תוכן מהשרת...");
+      try {
+        const user = netlifyIdentity.currentUser();
+        if (!user) {
+          hideLoading();
+          showLoginScreen();
+          return;
+        }
+        
+        const token = await user.jwt();
+        
+        // Fetch content.json from Git Gateway
+        const res = await fetch('/.netlify/git/github/contents/content.json', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        
+        if (!res.ok) {
+          throw new Error('שגיאה בגישה לקובץ התוכן ב-GitHub. אנא ודאו ששירות Git Gateway מופעל ב-Netlify.');
+        }
+        
+        const fileData = await res.json();
+        state.contentSha = fileData.sha; // Store SHA for updates
+        
+        // Decode base64 Hebrew content safely
+        const decodedText = decodeURIComponent(escape(atob(fileData.content.replace(/\s/g, ''))));
+        const data = JSON.parse(decodedText);
+        
+        state.site = data.site || {};
+        state.text = data.text || {};
+        state.gallery = data.gallery || [];
+        
+        buildTextForm();
+        buildGallery();
+        hideLoading();
+        showAppScreen();
+      } catch (err) {
+        hideLoading();
+        toast('שגיאה בטעינה: ' + err.message, true);
+        console.error(err);
+      }
+    }
+
+    async function saveContent() {
+      collectText();
+      collectGalleryInputs();
+      
+      const btn = document.getElementById("saveBtn");
+      btn.disabled = true;
+      btn.textContent = "שומר שינויים...";
+      
+      try {
+        const user = netlifyIdentity.currentUser();
+        if (!user) throw new Error('החיבור פג. אנא התחברו מחדש.');
+        
+        const token = await user.jwt();
+        const updatedData = {
+          site: state.site,
+          text: state.text,
+          gallery: state.gallery
+        };
+        
+        // Encode Hebrew characters safely to Base64
+        const jsonString = JSON.stringify(updatedData, null, 2);
+        const base64Content = btoa(unescape(encodeURIComponent(jsonString)));
+        
+        const res = await fetch('/.netlify/git/github/contents/content.json', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message: 'עדכון תוכן האתר דרך ממשק הניהול',
+            content: base64Content,
+            sha: state.contentSha,
+            branch: 'main'
+          })
+        });
+        
+        if (!res.ok) {
+          const errRes = await res.json();
+          throw new Error(errRes.message || 'שגיאה בשמירה לשרת');
+        }
+        
+        const resData = await res.json();
+        state.contentSha = resData.content.sha; // Update SHA for next save
+        toast('התוכן נשמר בהצלחה! האתר מתעדכן ברקע אוטומטית ✓');
+      } catch (err) {
+        toast('שגיאה בשמירה: ' + err.message, true);
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "שמירת שינויים";
+      }
+    }
+
+    // ---- Upload image directly to GitHub assets via Git Gateway ----
+    document.getElementById("uploadBtn").addEventListener("click", async function() {
+      if (!fileInput.files[0]) { toast("אנא בחרו קובץ תמונה קודם", true); return; }
+      
+      const title = document.getElementById("upTitle").value.trim();
+      const sub = document.getElementById("upSub").value.trim();
+      const file = fileInput.files[0];
+      
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = "מעלה...";
+      
+      try {
+        const user = netlifyIdentity.currentUser();
+        if (!user) throw new Error('החיבור פג. אנא התחברו מחדש.');
+        
+        const token = await user.jwt();
+        
+        // Read file as Base64 in-browser
+        const reader = new FileReader();
+        reader.onload = async function() {
+          try {
+            const base64Content = reader.result.split(',')[1];
+            
+            // Generate clean, safe filename
+            const sanitizedName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+            const filename = 'gallery_' + Date.now() + '_' + sanitizedName;
+            const path = 'assets/images/gallery/' + filename;
+            
+            const res = await fetch('/.netlify/git/github/contents/' + path, {
+              method: 'PUT',
+              headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                message: 'העלאת תמונה לגלריה: ' + filename,
+                content: base64Content,
+                branch: 'main'
+              })
+            });
+            
+            if (!res.ok) {
+              const errRes = await res.json();
+              throw new Error(errRes.message || 'שגיאה בהעלאת התמונה ל-GitHub');
+            }
+            
+            // Add new image reference to state gallery
+            const imagePath = '/' + path;
+            state.gallery.push({
+              src: imagePath,
+              title: title,
+              sub: sub
+            });
+            
+            buildGallery();
+            toast('התמונה הועלתה בהצלחה! לחצו על "שמירת שינויים" לסיום ✓');
+            
+            // Reset uploader inputs
+            fileInput.value = "";
+            document.getElementById("upTitle").value = "";
+            document.getElementById("upSub").value = "";
+            drop.textContent = "לחצו כאן לבחירת תמונה, או גררו תמונה לכאן";
+          } catch (err) {
+            toast('שגיאה בעיבוד התמונה: ' + err.message, true);
+            console.error(err);
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "העלאה";
+          }
+        };
+        
+        reader.onerror = function() {
+          toast('שגיאה בקריאת הקובץ מהמחשב', true);
+          btn.disabled = false;
+          btn.textContent = "העלאה";
+        };
+        
+        reader.readAsDataURL(file);
+        
+      } catch (err) {
+        toast('שגיאה בהעלאה: ' + err.message, true);
+        btn.disabled = false;
+        btn.textContent = "העלאה";
+        console.error(err);
+      }
+    });
+
+    // ---- Tabs switcher ----
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.addEventListener("click",function(){
+        document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("active")});
+        document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("active")});
+        t.classList.add("active");
+        document.getElementById("panel-"+t.getAttribute("data-tab")).classList.add("active");
+      });
+    });
+
+    // ---- Save Button Action ----
+    document.getElementById("saveBtn").addEventListener("click", saveContent);
+
+    // ================= IDENTITY & AUTHENTICATION =================
+    
+    function showLoginScreen() {
+      document.getElementById("loginScreen").style.display = "flex";
+      document.getElementById("appScreen").style.display = "none";
+    }
+    
+    function showAppScreen() {
+      document.getElementById("loginScreen").style.display = "none";
+      document.getElementById("appScreen").style.display = "block";
+    }
+
+    // Initial Netlify Identity configuration
+    netlifyIdentity.init();
+
+    // Listeners
+    netlifyIdentity.on("init", function(user) {
+      if (user) {
+        loadContent();
+      } else {
+        hideLoading();
+        showLoginScreen();
+      }
+    });
+
+    netlifyIdentity.on("login", function(user) {
+      netlifyIdentity.close();
+      loadContent();
+    });
+
+    netlifyIdentity.on("logout", function() {
+      showLoginScreen();
+    });
+
+    document.getElementById("loginBtn").addEventListener("click", function() {
+      netlifyIdentity.open();
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", function() {
+      netlifyIdentity.logout();
+    });
+  </script>
 </body>
 </html>
