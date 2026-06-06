@@ -1,0 +1,65 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Folder where uploaded gallery images will be saved
+media_folder: "assets/images/gallery"
+# Path to reference them in content.json
+public_folder: "assets/images/gallery"
+
+locale: "he"
+
+collections:
+  - name: "content"
+    label: "תוכן האתר"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - file: "content.json"
+        label: "עריכת תוכן האתר"
+        name: "content"
+        fields:
+          - label: "פרטי התקשרות (Site Settings)"
+            name: "site"
+            widget: "object"
+            fields:
+              - { label: "טלפון", name: "phone", widget: "string" }
+              - { label: "אימייל", name: "email", widget: "string" }
+              - { label: "כתובת", name: "address", widget: "string" }
+              - { label: "מספר וואטסאפ (לדוגמה: 972544655098)", name: "whatsapp", widget: "string" }
+          
+          - label: "טקסטים באתר (Page Texts)"
+            name: "text"
+            widget: "object"
+            fields:
+              - { label: "עמוד הבית — תווית עליונה ב-Hero", name: "hero_eyebrow", widget: "string" }
+              - { label: "עמוד הבית — שורת מותג (בזהב)", name: "hero_title", widget: "string" }
+              - { label: "עמוד הבית — שורת כותרת", name: "hero_title_sub", widget: "string" }
+              - { label: "עמוד הבית — כותרת משנה", name: "hero_subtitle", widget: "text" }
+              - { label: "עמוד הבית אודות — תווית", name: "intro_eyebrow", widget: "string" }
+              - { label: "עמוד הבית אודות — כותרת", name: "intro_title", widget: "string" }
+              - { label: "עמוד הבית אודות — טקסט", name: "intro_text", widget: "text" }
+              - { label: "עמוד הבית אודות — תגית", name: "intro_badge", widget: "string" }
+              - { label: "עמוד הבית שירותים — כותרת", name: "services_title", widget: "string" }
+              - { label: "עמוד הבית שירותים — תיאור", name: "services_subtitle", widget: "text" }
+              - { label: "גמילה מסמים — כותרת", name: "service1_title", widget: "string" }
+              - { label: "גמילה מסמים — תיאור", name: "service1_text", widget: "text" }
+              - { label: "גמילה מאלכוהול — כותרת", name: "service2_title", widget: "string" }
+              - { label: "גמילה מאלכוהול — תיאור", name: "service2_text", widget: "text" }
+              - { label: "גמילה מהימורים — כותרת", name: "service3_title", widget: "string" }
+              - { label: "גמילה מהימורים — תיאור", name: "service3_text", widget: "text" }
+              - { label: "עמוד אודותינו — כותרת", name: "about_title", widget: "string" }
+              - { label: "עמוד אודותינו — פסקה 1", name: "about_text1", widget: "text" }
+              - { label: "עמוד אודותינו — פסקה 2", name: "about_text2", widget: "text" }
+              - { label: "עמוד צור קשר — כותרת", name: "contact_title", widget: "string" }
+              - { label: "עמוד צור קשר — תיאור", name: "contact_text", widget: "text" }
+              - { label: "פוטר — אודות קצר", name: "footer_about", widget: "text" }
+
+          - label: "גלריית תמונות (Gallery)"
+            name: "gallery"
+            widget: "list"
+            fields:
+              - { label: "תמונה", name: "src", widget: "image" }
+              - { label: "כותרת", name: "title", widget: "string", required: false }
+              - { label: "תווית קטנה", name: "sub", widget: "string", required: false }

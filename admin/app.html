@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ניהול האתר | Reborn</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --gold:#c69a2e; --gold-d:#9a7416; --ink:#28231b; --muted:#7c715d;
+      --line:rgba(124,113,93,.25); --cream:#faf6ee; --grad:linear-gradient(135deg,#b8860b,#e6c061,#9a7416);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:"Noto Sans Hebrew",system-ui,sans-serif;direction:rtl;background:#f4eee2;color:var(--ink);line-height:1.6}
+    .topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;
+      gap:16px;padding:14px 22px;background:linear-gradient(160deg,#211b11,#2a241b);color:#fff;box-shadow:0 6px 24px -12px rgba(0,0,0,.5)}
+    .topbar .brand{font-weight:900;font-size:1.3rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .topbar .right{display:flex;align-items:center;gap:10px}
+    .btn{font-family:inherit;font-weight:700;cursor:pointer;border:none;border-radius:50px;padding:10px 20px;font-size:.95rem;transition:transform .15s,box-shadow .2s,background .2s}
+    .btn-gold{background:var(--grad);color:#3a2c07;box-shadow:0 12px 26px -12px rgba(198,154,46,.7)}
+    .btn-gold:hover{transform:translateY(-2px)}
+    .btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .btn-ghost:hover{background:rgba(255,255,255,.22)}
+    .btn-danger{background:#fde8e8;color:#b42318}
+    .btn-danger:hover{background:#f9d4d4}
+    .btn-sm{padding:7px 12px;font-size:.82rem}
+    .wrap{max-width:1000px;margin:0 auto;padding:26px 20px 80px}
+    .tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+    .tab{font-family:inherit;font-weight:700;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--muted);
+      border-radius:50px;padding:10px 22px;font-size:.95rem;transition:.2s}
+    .tab.active{background:var(--grad);color:#3a2c07;border-color:transparent}
+    .panel{display:none;animation:fade .3s ease}
+    .panel.active{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+    .group{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 22px 8px;margin-bottom:20px;box-shadow:0 14px 40px -28px rgba(42,36,27,.5)}
+    .group h2{font-size:1.15rem;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+    .group .desc{color:var(--muted);font-size:.85rem;margin-bottom:18px}
+    .field{margin-bottom:16px}
+    .field label{display:block;font-weight:600;font-size:.9rem;margin-bottom:7px}
+    .field input,.field textarea{width:100%;font-family:inherit;font-size:.98rem;padding:11px 13px;border:1.5px solid var(--line);
+      border-radius:11px;background:#fdfbf6;color:var(--ink);transition:border-color .2s,box-shadow .2s}
+    .field textarea{min-height:90px;resize:vertical}
+    .field input:focus,.field textarea:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 4px rgba(198,154,46,.22);background:#fff}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .savebar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+      border-top:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:30}
+    .savebar .hint{color:var(--muted);font-size:.85rem}
+    /* gallery */
+    .uploader{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+    .uploader .field{flex:1;min-width:160px;margin-bottom:0}
+    .drop{border:2px dashed var(--gold);border-radius:14px;padding:18px;text-align:center;color:var(--gold-d);
+      background:rgba(198,154,46,.06);cursor:pointer;font-weight:600;transition:.2s;margin-bottom:18px}
+    .drop:hover,.drop.over{background:rgba(198,154,46,.14)}
+    .ggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+    .gcard{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 14px 40px -28px rgba(42,36,27,.5);display:flex;flex-direction:column}
+    .gcard img{width:100%;height:150px;object-fit:cover;background:#eee}
+    .gcard .body{padding:12px;display:flex;flex-direction:column;gap:8px}
+    .gcard input{width:100%;font-family:inherit;font-size:.86rem;padding:8px 10px;border:1.5px solid var(--line);border-radius:9px;background:#fdfbf6}
+    .gcard input:focus{outline:none;border-color:var(--gold)}
+    .gcard .actions{display:flex;gap:6px;justify-content:space-between}
+    .toast{position:fixed;bottom:80px;right:50%;transform:translateX(50%) translateY(20px);opacity:0;pointer-events:none;
+      background:#211b11;color:#fff;padding:13px 26px;border-radius:50px;font-weight:700;transition:.3s;z-index:50;box-shadow:0 16px 40px -16px rgba(0,0,0,.6)}
+    .toast.show{opacity:1;transform:translateX(50%) translateY(0)}
+    .toast.err{background:#b42318}
+    .empty{color:var(--muted);text-align:center;padding:30px}
+    @media(max-width:560px){.row2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">Reborn · ניהול</div>
+    <div class="right">
+      <a class="btn btn-ghost btn-sm" href="/" target="_blank">צפייה באתר</a>
+      <a class="btn btn-ghost btn-sm" href="/admin/logout">יציאה</a>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="tabs">
+      <button class="tab active" data-tab="text">עריכת טקסטים</button>
+      <button class="tab" data-tab="gallery">ניהול גלריה</button>
+    </div>
+
+    <!-- ============ TEXT PANEL ============ -->
+    <div class="panel active" id="panel-text">
+      <div id="textForm"></div>
+    </div>
+
+    <!-- ============ GALLERY PANEL ============ -->
+    <div class="panel" id="panel-gallery">
+      <div class="group">
+        <h2>הוספת תמונה לגלריה</h2>
+        <div class="desc">בחרו תמונה מהמחשב, הוסיפו כותרת (לא חובה) ולחצו "העלאה".</div>
+        <div class="drop" id="drop">לחצו כאן לבחירת תמונה, או גררו תמונה לכאן</div>
+        <input type="file" id="fileInput" accept="image/*" hidden />
+        <div class="uploader">
+          <div class="field"><label>כותרת התמונה</label><input id="upTitle" type="text" placeholder="לדוגמה: חדר טיפול" /></div>
+          <div class="field"><label>תווית קטנה</label><input id="upSub" type="text" placeholder="לדוגמה: טיפול" /></div>
+          <button class="btn btn-gold" id="uploadBtn">העלאה</button>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>תמונות בגלריה</h2>
+        <div class="desc">ערכו כותרות, שנו סדר או מחקו. בסיום לחצו "שמירת הגלריה".</div>
+        <div class="ggrid" id="ggrid"></div>
+        <div class="empty" id="gEmpty" style="display:none">אין עדיין תמונות בגלריה.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="savebar">
+    <span class="hint" id="saveHint">השינויים נשמרים בקובץ האתר. לאחר מכן יש לפרסם מחדש ל-Netlify.</span>
+    <button class="btn btn-gold" id="saveBtn">שמירת שינויים</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+  // ---- field definitions (Hebrew labels) ----
+  var SITE_FIELDS = [
+    {k:"phone", label:"טלפון"},
+    {k:"email", label:"אימייל"},
+    {k:"address", label:"כתובת"},
+    {k:"whatsapp", label:"מספר וואטסאפ (פורמט בינלאומי, לדוגמה 972544655098)"}
+  ];
+  var TEXT_GROUPS = [
+    { title:"עמוד הבית — כותרת ראשית (Hero)", fields:[
+      {k:"hero_eyebrow", label:"תווית עליונה", t:"input"},
+      {k:"hero_title", label:"שורת מותג (בזהב)", t:"input"},
+      {k:"hero_title_sub", label:"שורת כותרת", t:"input"},
+      {k:"hero_subtitle", label:"כותרת משנה", t:"textarea"}
+    ]},
+    { title:"עמוד הבית — אודות קצר", fields:[
+      {k:"intro_eyebrow", label:"תווית", t:"input"},
+      {k:"intro_title", label:"כותרת", t:"input"},
+      {k:"intro_text", label:"טקסט", t:"textarea"},
+      {k:"intro_badge", label:"תגית (ליד המספר 15+)", t:"input"}
+    ]},
+    { title:"עמוד הבית — שירותים", fields:[
+      {k:"services_title", label:"כותרת המקטע", t:"input"},
+      {k:"services_subtitle", label:"תיאור המקטע", t:"textarea"},
+      {k:"service1_title", label:"שירות 1 — כותרת", t:"input"},
+      {k:"service1_text", label:"שירות 1 — טקסט", t:"textarea"},
+      {k:"service2_title", label:"שירות 2 — כותרת", t:"input"},
+      {k:"service2_text", label:"שירות 2 — טקסט", t:"textarea"},
+      {k:"service3_title", label:"שירות 3 — כותרת", t:"input"},
+      {k:"service3_text", label:"שירות 3 — טקסט", t:"textarea"}
+    ]},
+    { title:"עמוד אודותינו", fields:[
+      {k:"about_title", label:"כותרת", t:"input"},
+      {k:"about_text1", label:"פסקה 1", t:"textarea"},
+      {k:"about_text2", label:"פסקה 2", t:"textarea"}
+    ]},
+    { title:"עמוד צור קשר", fields:[
+      {k:"contact_title", label:"כותרת", t:"input"},
+      {k:"contact_text", label:"טקסט", t:"textarea"}
+    ]},
+    { title:"כללי / פוטר", fields:[
+      {k:"footer_about", label:"טקסט אודות בפוטר", t:"textarea"}
+    ]}
+  ];
+
+  var state = { site:{}, text:{}, gallery:[] };
+
+  function toast(msg, isErr){
+    var t=document.getElementById("toast");
+    t.textContent=msg; t.className="toast show"+(isErr?" err":"");
+    setTimeout(function(){t.className="toast"+(isErr?" err":"")},2600);
+  }
+  function esc(s){return String(s==null?"":s).replace(/"/g,"&quot;");}
+
+  // ---- build text form ----
+  function buildTextForm(){
+    var html = '<div class="group"><h2>פרטי התקשרות</h2><div class="desc">מתעדכן בכל העמודים (טלפון, אימייל, כתובת, וואטסאפ).</div><div class="row2">';
+    SITE_FIELDS.forEach(function(f){
+      html += '<div class="field"><label>'+f.label+'</label><input type="text" data-site="'+f.k+'" value="'+esc(state.site[f.k])+'"></div>';
+    });
+    html += '</div></div>';
+
+    TEXT_GROUPS.forEach(function(g){
+      html += '<div class="group"><h2>'+g.title+'</h2>';
+      g.fields.forEach(function(f){
+        var v = esc(state.text[f.k]);
+        if(f.t==="textarea"){
+          html += '<div class="field"><label>'+f.label+'</label><textarea data-text="'+f.k+'">'+(state.text[f.k]||"")+'</textarea></div>';
+        }else{
+          html += '<div class="field"><label>'+f.label+'</label><input type="text" data-text="'+f.k+'" value="'+v+'"></div>';
+        }
+      });
+      html += '</div>';
+    });
+    document.getElementById("textForm").innerHTML = html;
+  }
+
+  function collectText(){
+    document.querySelectorAll("[data-site]").forEach(function(el){ state.site[el.getAttribute("data-site")] = el.value.trim(); });
+    document.querySelectorAll("[data-text]").forEach(function(el){ state.text[el.getAttribute("data-text")] = el.value; });
+  }
+
+  // ---- gallery ----
+  function buildGallery(){
+    var grid=document.getElementById("ggrid"); grid.innerHTML="";
+    document.getElementById("gEmpty").style.display = state.gallery.length ? "none":"block";
+    state.gallery.forEach(function(item, i){
+      var c=document.createElement("div"); c.className="gcard";
+      c.innerHTML =
+        '<img src="'+esc(item.src)+'" alt="">'+
+        '<div class="body">'+
+          '<input type="text" data-gi="'+i+'" data-gf="title" value="'+esc(item.title)+'" placeholder="כותרת">'+
+          '<input type="text" data-gi="'+i+'" data-gf="sub" value="'+esc(item.sub)+'" placeholder="תווית קטנה">'+
+          '<div class="actions">'+
+            '<button class="btn btn-ghost btn-sm" data-move="up" data-i="'+i+'" style="color:#3a2c07;border-color:var(--line)">▲</button>'+
+            '<button class="btn btn-ghost btn-sm" data-move="down" data-i="'+i+'" style="color:#3a2c07;border-color:var(--line)">▼</button>'+
+            '<button class="btn btn-danger btn-sm" data-del="'+i+'">מחיקה</button>'+
+          '</div>'+
+        '</div>';
+      grid.appendChild(c);
+    });
+  }
+  function collectGalleryInputs(){
+    document.querySelectorAll("[data-gi]").forEach(function(el){
+      var i=+el.getAttribute("data-gi"), f=el.getAttribute("data-gf");
+      if(state.gallery[i]) state.gallery[i][f]=el.value;
+    });
+  }
+
+  document.getElementById("ggrid").addEventListener("click", function(e){
+    var del=e.target.getAttribute("data-del");
+    var mv=e.target.getAttribute("data-move");
+    if(del!==null){ collectGalleryInputs(); state.gallery.splice(+del,1); buildGallery(); return; }
+    if(mv){ collectGalleryInputs(); var i=+e.target.getAttribute("data-i");
+      var j= mv==="up"? i-1 : i+1;
+      if(j<0||j>=state.gallery.length) return;
+      var tmp=state.gallery[i]; state.gallery[i]=state.gallery[j]; state.gallery[j]=tmp; buildGallery();
+    }
+  });
+
+  // ---- upload ----
+  var fileInput=document.getElementById("fileInput");
+  var drop=document.getElementById("drop");
+  drop.addEventListener("click",function(){fileInput.click();});
+  drop.addEventListener("dragover",function(e){e.preventDefault();drop.classList.add("over");});
+  drop.addEventListener("dragleave",function(){drop.classList.remove("over");});
+  drop.addEventListener("drop",function(e){e.preventDefault();drop.classList.remove("over");
+    if(e.dataTransfer.files[0]){ fileInput.files=e.dataTransfer.files; drop.textContent=e.dataTransfer.files[0].name; }});
+  fileInput.addEventListener("change",function(){ if(fileInput.files[0]) drop.textContent=fileInput.files[0].name; });
+
+  document.getElementById("uploadBtn").addEventListener("click", function(){
+    if(!fileInput.files[0]){ toast("בחרו תמונה תחילה", true); return; }
+    var fd=new FormData();
+    fd.append("image", fileInput.files[0]);
+    fd.append("title", document.getElementById("upTitle").value);
+    fd.append("sub", document.getElementById("upSub").value);
+    this.disabled=true; this.textContent="מעלה...";
+    var btn=this;
+    fetch("/api/upload",{method:"POST",body:fd}).then(function(r){return r.json();}).then(function(res){
+      btn.disabled=false; btn.textContent="העלאה";
+      if(res.ok){ state.gallery=res.gallery; buildGallery();
+        fileInput.value=""; document.getElementById("upTitle").value=""; document.getElementById("upSub").value="";
+        drop.textContent="לחצו כאן לבחירת תמונה, או גררו תמונה לכאן"; toast("התמונה הועלתה ✓"); }
+      else toast(res.error||"שגיאה בהעלאה", true);
+    }).catch(function(){ btn.disabled=false; btn.textContent="העלאה"; toast("שגיאה בהעלאה", true); });
+  });
+
+  // ---- tabs ----
+  document.querySelectorAll(".tab").forEach(function(t){
+    t.addEventListener("click",function(){
+      document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("active")});
+      document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("active")});
+      t.classList.add("active");
+      document.getElementById("panel-"+t.getAttribute("data-tab")).classList.add("active");
+    });
+  });
+
+  // ---- save everything ----
+  document.getElementById("saveBtn").addEventListener("click", function(){
+    collectText(); collectGalleryInputs();
+    var btn=this; btn.disabled=true; btn.textContent="שומר...";
+    Promise.all([
+      fetch("/api/content",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({site:state.site,text:state.text})}).then(function(r){return r.json();}),
+      fetch("/api/gallery",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({gallery:state.gallery})}).then(function(r){return r.json();})
+    ]).then(function(res){
+      btn.disabled=false; btn.textContent="שמירת שינויים";
+      if(res[1].gallery) state.gallery=res[1].gallery;
+      toast("נשמר בהצלחה ✓");
+    }).catch(function(){ btn.disabled=false; btn.textContent="שמירת שינויים"; toast("שגיאה בשמירה", true); });
+  });
+
+  // ---- load ----
+  fetch("/api/content").then(function(r){return r.json();}).then(function(data){
+    state.site=data.site||{}; state.text=data.text||{}; state.gallery=data.gallery||[];
+    buildTextForm(); buildGallery();
+  });
+  </script>
+</body>
+</html>
