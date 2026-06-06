@@ -25,6 +25,21 @@
       }
     });
 
+    // Fill counters and suffixes dynamically before animation runs
+    document.querySelectorAll("[data-count-key]").forEach(function (el) {
+      var countKey = el.getAttribute("data-count-key");
+      var suffixKey = el.getAttribute("data-suffix-key");
+      var countVal = text[countKey];
+      var suffixVal = text[suffixKey];
+      if (countVal !== undefined && countVal !== null && String(countVal).length) {
+        el.setAttribute("data-count", countVal);
+        el.textContent = countVal; // fallback text
+      }
+      if (suffixVal !== undefined && suffixVal !== null && String(suffixVal).length) {
+        el.setAttribute("data-suffix", suffixVal);
+      }
+    });
+
     // WhatsApp links: <a class="js-wa">  +  floating button
     if (site.whatsapp) {
       document.querySelectorAll(".js-wa, .wa-float").forEach(function (a) {
