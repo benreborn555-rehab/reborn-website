@@ -21,7 +21,11 @@
         val = text[key];
       }
       if (val !== undefined && val !== null && String(val).length) {
-        el.textContent = val;
+        if (el.tagName === "IMG") {
+          el.src = val;
+        } else {
+          el.textContent = val;
+        }
       }
     });
 

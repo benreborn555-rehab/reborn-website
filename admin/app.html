@@ -186,12 +186,29 @@
 
   // ---- build text form ----
   function buildTextForm(){
+    // Group 1: Contact details
     var html = '<div class="group"><h2>פרטי התקשרות</h2><div class="desc">מתעדכן בכל העמודים (טלפון, אימייל, כתובת, וואטסאפ).</div><div class="row2">';
     SITE_FIELDS.forEach(function(f){
       html += '<div class="field"><label>'+f.label+'</label><input type="text" data-site="'+f.k+'" value="'+esc(state.site[f.k])+'"></div>';
     });
     html += '</div></div>';
 
+    // Group 2: Logo upload
+    html += '<div class="group"><h2>לוגו האתר</h2><div class="desc">העלו קובץ לוגו חדש כדי להחליף את הלוגו המוצג בראש האתר ובפוטר (מומלץ להשתמש בקובץ PNG שקוף עם רקע שקוף).</div>';
+    html += '<div style="display:flex; align-items:center; gap:24px; margin-bottom:12px; flex-wrap:wrap;">';
+    html += '  <div>';
+    html += '    <label style="display:block; font-weight:700; font-size:.9rem; margin-bottom:8px; color:var(--ink);">לוגו נוכחי:</label>';
+    html += '    <img id="logoPreview" src="'+(state.site.logo || '/assets/images/logo.png')+'" style="max-height:80px; max-width:220px; object-fit:contain; background:#211b11; padding:12px; border-radius:12px; border:2px solid var(--gold); display:block;" onerror="this.src=\'/assets/images/logo.png\'">';
+    html += '  </div>';
+    html += '  <div style="flex:1; min-width:240px;">';
+    html += '    <label style="display:block; font-weight:700; font-size:.9rem; margin-bottom:8px; color:var(--ink);">בחירת קובץ לוגו חדש:</label>';
+    html += '    <input type="file" id="logoFileInput" accept="image/*" style="display:block; margin-bottom:15px; font-family:inherit; font-size:0.9rem;" />';
+    html += '    <button class="btn btn-gold btn-sm" id="uploadLogoBtn" type="button" onclick="handleLogoUpload()">החלפת לוגו</button>';
+    html += '  </div>';
+    html += '</div>';
+    html += '</div>';
+
+    // Page Text Groups
     TEXT_GROUPS.forEach(function(g){
       html += '<div class="group"><h2>'+g.title+'</h2>';
       g.fields.forEach(function(f){
@@ -199,17 +216,61 @@
         if(f.t==="textarea"){
           html += '<div class="field"><label>'+f.label+'</label><textarea data-text="'+f.k+'">'+(state.text[f.k]||"")+'</textarea></div>';
         }else{
-          html += '<div class="field"><label>'+f.label+'</label><input type="text" data-text="'+f.k+'" value="'+v+'"></div>';
+          html += '<div class="field"><label>'+f.label+'</label><input type="text" data-text="'+f.k+'" value="v" data-val-unescaped="true"></div>';
         }
       });
       html += '</div>';
     });
     document.getElementById("textForm").innerHTML = html;
+    
+    // Fix input values to avoid escaping double quotes issues in attributes
+    document.querySelectorAll("[data-val-unescaped]").forEach(function(el){
+      var key = el.getAttribute("data-text");
+      el.value = state.text[key] || "";
+    });
   }
 
   function collectText(){
     document.querySelectorAll("[data-site]").forEach(function(el){ state.site[el.getAttribute("data-site")] = el.value.trim(); });
     document.querySelectorAll("[data-text]").forEach(function(el){ state.text[el.getAttribute("data-text")] = el.value; });
+  }
+
+  // ---- Local Logo Upload via Local Server API ----
+  function handleLogoUpload() {
+    var fileInput = document.getElementById("logoFileInput");
+    var btn = document.getElementById("uploadLogoBtn");
+    if (!fileInput || !fileInput.files[0]) {
+      toast("אנא בחרו קובץ לוגו קודם", true);
+      return;
+    }
+    
+    var file = fileInput.files[0];
+    var fd = new FormData();
+    fd.append("logo", file);
+    
+    btn.disabled = true;
+    btn.textContent = "מעלה לוגו...";
+    
+    fetch("/api/upload-logo", { method: "POST", body: fd })
+      .then(function(r){ return r.json(); })
+      .then(function(res){
+        btn.disabled = false;
+        btn.textContent = "החלפת לוגו";
+        if(res.ok){
+          state.site.logo = res.logoUrl;
+          var preview = document.getElementById("logoPreview");
+          if (preview) preview.src = res.logoUrl;
+          toast("הלוגו הוחלף בהצלחה! לחצו על שמירת שינויים למטה ✓");
+          fileInput.value = "";
+        } else {
+          toast(res.error || "שגיאה בהעלאת הלוגו", true);
+        }
+      })
+      .catch(function(){
+        btn.disabled = false;
+        btn.textContent = "החלפת לוגו";
+        toast("שגיאה בחיבור לשרת", true);
+      });
   }
 
   // ---- gallery ----

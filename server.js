@@ -237,6 +237,21 @@ const server = http.createServer(async (req, res) => {
         writeContent(data);
         return sendJSON(res, 200, { ok: true, entry, gallery: data.gallery });
       }
+      if (pathname === "/api/upload-logo" && method === "POST") {
+        const buf = await readBody(req);
+        const { files } = parseMultipart(buf, req.headers["content-type"]);
+        const file = files.logo;
+        if (!file || !file.data || !file.data.length) return sendJSON(res, 400, { error: "no file" });
+        if (!/^image\//.test(file.type || "")) return sendJSON(res, 400, { error: "רק קבצי תמונה" });
+        let ext = (path.extname(file.filename) || ".png").toLowerCase();
+        if (!/^\.(png|jpe?g|gif|webp|svg)$/.test(ext)) ext = ".png";
+        const fname = "logo_" + Date.now() + ext;
+        const targetDir = path.join(ROOT, "assets", "images");
+        if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
+        fs.writeFileSync(path.join(targetDir, fname), file.data);
+        const logoUrl = "/assets/images/" + fname;
+        return sendJSON(res, 200, { ok: true, logoUrl });
+      }
       return sendJSON(res, 404, { error: "not found" });
     }
 
